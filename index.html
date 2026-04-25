@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nublume Grow">
+<meta name="theme-color" content="#080808">
+<title>Nublume — Grow App</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Design Tokens ───────────────────────────────────────────────── */
+:root {
+  /* Core Brand */
+  --pink: #E91E8C;
+  --pink-hover: #d41880;
+  --pink-dim: rgba(233,30,140,0.10);
+  --pink-soft: rgba(233,30,140,0.07);
+  --pink-border: rgba(233,30,140,0.22);
+  --pink-glow: rgba(233,30,140,0.20);
+  --pink-future: rgba(233,30,140,0.18);
+  --green: #AAFF00;
+  --green-dim: rgba(170,255,0,0.10);
+  --green-border: rgba(170,255,0,0.22);
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --indigo: #6366F1;
+
+  /* Neutral Scale (cool-tinted) */
+  --n0:  #060608;   /* page bg */
+  --n1:  #0b0b0f;   /* app bg */
+  --n2:  #101014;   /* raised surface */
+  --n3:  #16161c;   /* card */
+  --n4:  #1c1c24;   /* elevated card */
+  --n5:  #232330;   /* hover state */
+  --n6:  #2a2a38;   /* border default */
+  --n7:  #3a3a4e;   /* border strong */
+  --n8:  #4d4d66;   /* text tertiary */
+  --n9:  #7a7a96;   /* text secondary */
+  --n10: #b8b8cc;   /* text muted */
+  --n11: #eeeef2;   /* text primary */
+
+  /* Aliases */
+  --black: var(--n1);
+  --surface: var(--n2);
+  --card: var(--n3);
+  --card-elevated: var(--n4);
+  --border: var(--n6);
+  --border-strong: var(--n7);
+  --white: var(--n11);
+  --gray: var(--n9);
+  --gray-light: var(--n10);
+  --text: var(--n11);
+  --text-dim: var(--n8);
+
+  /* Elevation Shadows */
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.4), 0 1px 6px rgba(0,0,0,0.2);
+  --shadow-2: 0 2px 8px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-3: 0 8px 24px rgba(0,0,0,0.6), 0 3px 8px rgba(0,0,0,0.3);
+  --shadow-4: 0 20px 60px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.4);
+  --shadow-pink: 0 0 0 1px var(--pink-border), 0 4px 20px rgba(233,30,140,0.15);
+  --shadow-green: 0 0 0 1px var(--green-border), 0 4px 20px rgba(170,255,0,0.10);
+
+  /* Radius */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-2xl: 32px;
+
+  /* Typography */
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Layout */
+  --nav-h: 72px;
+  --status-h: 44px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Legacy aliases for compat */
+  --radius: var(--r-xl);
+  --radius-sm: var(--r-md);
+  --deep: var(--n0);
+  --text-dim: var(--n8);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--n0);
+  color: var(--text);
+  font-family: var(--font-body);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #030305;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(233,30,140,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(233,30,140,0.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* ── App Shell ───────────────────────────────────────────────────── */
+#app-shell {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  background: var(--n1);
+  overflow: hidden;
+  border-radius: 50px;
+  box-shadow:
+    var(--shadow-4),
+    0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* ── Screens ─────────────────────────────────────────────────────── */
+.screen { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: calc(var(--nav-h) + 20px);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroll-content::-webkit-scrollbar { display: none; }
+
+/* ── Bottom Nav ──────────────────────────────────────────────────── */
+.bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(8,8,12,0.94);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  border-top: 1px solid rgba(255,255,255,0.055);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px 10px;
+  z-index: 200;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  min-width: 48px;
+  position: relative;
+}
+
+.nav-item .nav-icon {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--n8);
+  transition: all 200ms var(--ease);
+}
+
+.nav-item .nav-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--n8);
+  transition: all 200ms var(--ease);
+  letter-spacing: 0.02em;
+}
+
+.nav-item.active .nav-icon { color: var(--pink); transform: scale(1.08); }
+.nav-item.active .nav-label { color: var(--pink); font-weight: 600; }
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 50%; transform: translateX(-50%);
+  width: 20px; height: 2px;
+  background: var(--pink);
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 0 8px var(--pink);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn-primary {
+  width: 100%;
+  padding: 17px 24px;
+  border-radius: var(--r-lg);
+  background: var(--pink);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(233,30,140,0.30), 0 1px 4px rgba(233,30,140,0.20);
+}
+.btn-primary::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%);
+  pointer-events: none;
+}
+.btn-primary:hover { background: var(--pink-hover); box-shadow: 0 6px 28px rgba(233,30,140,0.40), 0 2px 6px rgba(233,30,140,0.25); transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.98) translateY(0); box-shadow: 0 2px 12px rgba(233,30,140,0.25); }
+
+.btn-secondary {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: var(--r-lg);
+  background: rgba(255,255,255,0.04);
+  color: var(--n10);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 200ms var(--ease);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); }
+.btn-secondary:active { opacity: 0.7; transform: scale(0.98); }
+
+/* ── Welcome ─────────────────────────────────────────────────────── */
+#screen-welcome {
+  background: var(--n1);
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 60px 32px 48px;
+}
+
+.welcome-logo {
+  width: 288px; height: 120px;
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 32px;
+}
+
+.welcome-eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+}
+
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--n11);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.welcome-title span { color: var(--pink); }
+
+.welcome-sub {
+  font-size: 15px;
+  color: var(--n9);
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+/* ── Setup ───────────────────────────────────────────────────────── */
+#screen-setup { background: var(--n1); padding-top: 0; overflow-y: auto; }
+
+.setup-header {
+  padding: 20px 24px 0;
+  position: sticky; top: 0;
+  background: var(--n1);
+  z-index: 10;
+}
+
+.back-btn {
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
+  background: var(--n3);
+  border: 1px solid var(--n6);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 17px;
+  color: var(--n11);
+  margin-bottom: 22px;
+  transition: all 200ms var(--ease);
+  box-shadow: var(--shadow-1);
+}
+.back-btn:hover { background: var(--n4); border-color: var(--n7); }
+.back-btn:active { transform: scale(0.93); }
+
+.setup-step {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pink);
+  margin-bottom: 8px;
+}
+
+.setup-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--n11);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.setup-sub {
+  font-size: 14px;
+  color: var(--n9);
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+
+.progress-steps { display: flex; gap: 5px; margin-bottom: 24px; padding: 0 24px; }
+.progress-step {
+  height: 3px; flex: 1; border-radius: 2px;
+  background: var(--n5);
+  transition: background 400ms var(--ease);
+}
+.progress-step.done { background: var(--pink); box-shadow: 0 0 6px rgba(233,30,140,0.4); }
+
+.form-group { margin-bottom: 20px; padding: 0 24px; }
+
+.form-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--n9);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--n3);
+  border: 1px solid var(--n6);
+  border-radius: var(--r-md);
+  color: var(--n11);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease), background 200ms var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: var(--shadow-1);
+}
+.form-input::placeholder { color: var(--n8); opacity: 1; }
+.form-input:focus {
+  border-color: var(--pink);
+  background: var(--n4);
+  box-shadow: 0 0 0 3px rgba(233,30,140,0.12), var(--shadow-1);
+}
+.form-input option { background: var(--n3); }
+
+/* Strain dropdown */
+.strain-search-wrap { position: relative; }
+.strain-dropdown {
+  position: absolute;
+  top: calc(100% + 6px); left: 0; right: 0;
+  background: var(--n3);
+  border: 1px solid var(--n7);
+  border-radius: var(--r-md);
+  max-height: 360px;
+  overflow-y: auto;
+  z-index: 300;
+  display: none;
+  box-shadow: var(--shadow-3);
+}
+.strain-dropdown.open { display: block; }
+.strain-opt {
+  padding: 13px 18px;
+  cursor: pointer;
+  transition: background 150ms var(--ease);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.strain-opt:hover { background: var(--n4); }
+.strain-opt-name { font-size: 14px; color: var(--n11); font-weight: 500; }
+.strain-opt-profile { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; }
+.strain-opt-profile.standard { background: rgba(233,30,140,0.12); color: var(--pink); }
+.strain-opt-profile.fast { background: var(--green-dim); color: var(--green); }
+.strain-opt-profile.slow { background: rgba(100,120,255,0.12); color: #8899ff; }
+.strain-opt-profile.enigma { background: rgba(255,165,0,0.12); color: #ffaa33; }
+
+.strain-badge-wrap { padding: 0 24px 10px; }
+.strain-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.strain-badge.standard { background: var(--pink-dim); color: var(--pink); border: 1px solid var(--pink-border); }
+.strain-badge.fast { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.strain-badge.slow { background: rgba(100,120,255,0.10); color: #8899ff; border: 1px solid rgba(100,120,255,0.25); }
+.strain-badge.enigma { background: rgba(255,165,0,0.10); color: #ffaa33; border: 1px solid rgba(255,165,0,0.25); }
+
+.setup-footer { padding: 16px 24px 52px; }
+
+/* ── Home Screen ─────────────────────────────────────────────────── */
+#screen-home { background: var(--n1); }
+
+.home-header {
+  padding: 22px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-greeting { font-size: 13px; color: var(--n9); font-weight: 400; letter-spacing: 0.01em; }
+
+.home-name {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--n11);
+  margin-top: 3px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+}
+
+.avatar-btn {
+  width: 42px; height: 42px;
+  border-radius: var(--r-md);
+  background: rgba(233,30,140,0.12);
+  border: 1px solid var(--pink-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  position: relative;
+  transition: all 200ms var(--ease);
+  box-shadow: var(--shadow-pink);
+}
+.avatar-btn:hover { background: rgba(233,30,140,0.18); }
+.avatar-btn:active { transform: scale(0.92); }
+
+/* Progress Ring */
+.progress-ring-section {
+  padding: 20px 24px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.ring-wrap { position: relative; width: 112px; height: 112px; flex-shrink: 0; }
+.ring-wrap svg { transform: rotate(-90deg); width: 112px; height: 112px; }
+.ring-bg { fill: none; stroke: var(--n5); stroke-width: 7; }
+.ring-progress {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 0 7px rgba(233,30,140,0.6));
+}
+.ring-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.ring-pct {
+  font-family: var(--font-display);
+  font-size: 23px; font-weight: 800;
+  color: var(--n11); line-height: 1;
+  letter-spacing: -0.02em;
+}
+.ring-label {
+  font-size: 9px; font-weight: 600;
+  color: var(--n8);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-top: 3px;
+}
+
+.ring-stats { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+.stat-row { display: flex; flex-direction: column; gap: 3px; }
+.stat-label { font-size: 10px; color: var(--n9); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; }
+.stat-value { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--n11); letter-spacing: -0.01em; }
+.stat-unit { font-size: 12px; color: var(--n9); font-weight: 400; }
+
+/* Stage Badge */
+.stage-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  font-family: var(--font-display);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.stage-badge.colonizing { background: var(--pink-dim); color: var(--pink); border: 1px solid var(--pink-border); }
+.stage-badge.pinning { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.stage-badge.fruiting { background: rgba(245,158,11,0.10); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+.stage-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* Streak Strip */
+.streak-strip {
+  margin: 0 20px 16px;
+  background: var(--n3);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: var(--shadow-2);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.streak-item { text-align: center; }
+.streak-num { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--n11); letter-spacing: -0.02em; }
+.streak-num.green { color: var(--green); }
+.streak-num.pink { color: var(--pink); }
+.streak-tag { font-size: 10px; color: var(--n9); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; font-weight: 500; }
+
+/* Section Header */
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 24px; margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 16px; font-weight: 800;
+  color: var(--n11);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+.section-link { font-size: 12px; font-weight: 600; color: var(--pink); cursor: pointer; transition: opacity 200ms; }
+.section-link:hover { opacity: 0.8; }
+
+/* Check-In Banner */
+.checkin-banner {
+  margin: 0 20px 20px;
+  background: linear-gradient(135deg, rgba(233,30,140,0.12), rgba(233,30,140,0.04));
+  border: 1px solid var(--pink-border);
+  border-radius: var(--r-xl);
+  padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  box-shadow: 0 4px 16px rgba(233,30,140,0.08);
+}
+.checkin-banner:hover { background: linear-gradient(135deg, rgba(233,30,140,0.16), rgba(233,30,140,0.06)); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(233,30,140,0.14); }
+.checkin-banner:active { transform: scale(0.99); opacity: 0.9; }
+
+.checkin-icon {
+  width: 46px; height: 46px;
+  border-radius: var(--r-md);
+  background: var(--pink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(233,30,140,0.30);
+}
+.checkin-text { flex: 1; }
+.checkin-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--n11); letter-spacing: -0.005em; }
+.checkin-sub { font-size: 12px; color: var(--n9); margin-top: 3px; }
+.checkin-arrow { color: var(--pink); font-size: 20px; opacity: 0.7; }
+
+/* Calendar */
+.calendar-wrap {
+  margin: 0 20px 20px;
+  background: var(--n3);
+  border-radius: var(--r-xl);
+  padding: 18px;
+  box-shadow: var(--shadow-2);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.cal-month { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--n11); letter-spacing: -0.01em; }
+.cal-arrow {
+  width: 30px; height: 30px;
+  border-radius: var(--r-xs);
+  background: var(--n4);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--n11); cursor: pointer;
+  font-size: 16px;
+  transition: all 150ms var(--ease);
+  border: none;
+}
+.cal-arrow:hover { background: var(--n5); }
+.cal-arrow:active { background: var(--pink-dim); color: var(--pink); transform: scale(0.9); }
+
+.cal-days-header { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
+.cal-day-label {
+  text-align: center;
+  font-size: 10px; font-weight: 700;
+  color: var(--n8);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  padding: 4px 0;
+}
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-cell {
+  aspect-ratio: 1;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  font-size: 13px; font-weight: 500;
+  color: var(--n9);
+  cursor: pointer;
+  position: relative;
+  transition: all 150ms var(--ease);
+  gap: 1px;
+}
+.cal-cell:hover { background: var(--n5); color: var(--n11); }
+.cal-cell.other-month { color: var(--n7); opacity: 0.5; }
+.cal-cell.today {
+  background: var(--n4);
+  color: var(--n11); font-weight: 700;
+  box-shadow: inset 0 0 0 1.5px var(--pink);
+}
+.cal-cell.startd { background: var(--pink); color: #fff; font-weight: 800; box-shadow: 0 2px 10px rgba(233,30,140,0.40); }
+.cal-cell.cid { background: var(--pink); color: #fff; font-weight: 700; box-shadow: 0 2px 14px rgba(233,30,140,0.50); }
+.cal-cell.cid-future { background: var(--pink-future); color: var(--n11); font-weight: 600; box-shadow: inset 0 0 0 1px var(--pink-border); }
+.cal-cell.cid::after, .cal-cell.cid-future::after {
+  content: '';
+  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #fff; opacity: 0.8;
+}
+.cal-cell.doned { background: var(--green-dim); color: var(--green); font-weight: 600; }
+.cal-cell.doned::after {
+  content: '✓';
+  position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+  font-size: 7px; color: var(--green);
+}
+.cal-cell:active { transform: scale(0.88); }
+
+.cal-legend { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--n9); font-weight: 500; }
+.legend-dot { width: 8px; height: 8px; border-radius: 3px; }
+.legend-dot.s { background: var(--pink); }
+.legend-dot.ci { background: var(--pink); opacity: 0.45; box-shadow: inset 0 0 0 1px var(--pink); }
+.legend-dot.done { background: var(--green-dim); box-shadow: inset 0 0 0 1px var(--green); }
+.legend-dot.today { background: var(--n4); box-shadow: inset 0 0 0 1.5px var(--pink); }
+
+/* Active dot */
+.grow-active-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  display: inline-block;
+  margin-right: 7px;
+  animation: pulse-green 2.2s infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 5px var(--green); }
+  50% { box-shadow: 0 0 14px var(--green), 0 0 28px rgba(170,255,0,0.25); }
+}
+
+.notif-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--pink);
+  border: 2px solid var(--n1);
+  box-shadow: 0 0 6px rgba(233,30,140,0.5);
+}
+
+/* ── Insights Screen ─────────────────────────────────────────────── */
+#screen-insights { background: var(--n1); }
+.screen-title {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 800;
+  color: var(--n11);
+  letter-spacing: -0.02em;
+  margin-bottom: 5px;
+}
+.screen-sub { font-size: 14px; color: var(--n9); font-weight: 400; }
+.insights-header { padding: 22px 24px 20px; }
+
+.ai-analyze-card {
+  margin: 0 20px 20px;
+  background: linear-gradient(145deg, #160d12, #0f0b15);
+  border: 1px solid var(--pink-border);
+  border-radius: var(--r-xl);
+  padding: 22px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-pink);
+}
+.ai-analyze-card::before {
+  content: '';
+  position: absolute; top: -50px; right: -50px;
+  width: 140px; height: 140px;
+  background: radial-gradient(circle, rgba(233,30,140,0.14), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ai-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px;
+  background: var(--green-dim);
+  border: 1px solid var(--green-border);
+  border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  margin-bottom: 14px;
+}
+.ai-title { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--n11); margin-bottom: 7px; letter-spacing: -0.01em; }
+.ai-sub { font-size: 13px; color: var(--n9); margin-bottom: 18px; line-height: 1.55; }
+
+.upload-zone {
+  border: 1.5px dashed rgba(233,30,140,0.35);
+  border-radius: var(--r-md);
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  background: var(--pink-soft);
+}
+.upload-zone:hover { border-color: var(--pink); background: var(--pink-dim); }
+.upload-zone:active { border-color: var(--pink); background: rgba(233,30,140,0.14); }
+.upload-zone-icon { font-size: 30px; margin-bottom: 8px; }
+.upload-zone-text { font-size: 13px; color: var(--n9); }
+.upload-zone-text span { color: var(--pink); font-weight: 600; }
+
+.ai-response-box {
+  margin-top: 16px;
+  background: var(--n2);
+  border: 1px solid var(--n6);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: none;
+}
+.ai-response-box.visible { display: block; }
+.ai-response-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); margin-bottom: 9px; }
+.ai-response-text { font-size: 13px; color: var(--n10); line-height: 1.6; }
+.ai-typing::after { content: '▋'; animation: blink 0.8s infinite; color: var(--pink); }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.insights-list { padding: 0 20px; }
+.insight-card {
+  background: var(--n3);
+  border-radius: var(--r-lg);
+  padding: 16px 16px 16px 20px;
+  margin-bottom: 10px;
+  display: flex; gap: 14px; align-items: flex-start;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: all 200ms var(--ease);
+  box-shadow: var(--shadow-1);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.insight-card:hover { background: var(--n4); transform: translateY(-1px); box-shadow: var(--shadow-2); }
+.insight-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+}
+.insight-card.tip::before { background: var(--green); }
+.insight-card.warning::before { background: var(--amber); }
+.insight-card.info::before { background: var(--pink); }
+.insight-card.locked { opacity: 0.4; cursor: default; }
+.insight-card.locked:hover { transform: none; box-shadow: var(--shadow-1); }
+
+.insight-icon-wrap {
+  width: 40px; height: 40px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.insight-icon-wrap.tip { background: var(--green-dim); }
+.insight-icon-wrap.warning { background: rgba(245,158,11,0.10); }
+.insight-icon-wrap.info { background: var(--pink-dim); }
+
+.insight-content { flex: 1; }
+.insight-stage { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--n8); margin-bottom: 4px; }
+.insight-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--n11); margin-bottom: 5px; letter-spacing: -0.005em; }
+.insight-text { font-size: 12px; color: var(--n9); line-height: 1.5; }
+.insight-lock { font-size: 14px; color: var(--n7); }
+
+/* ── Community ───────────────────────────────────────────────────── */
+#screen-community { background: var(--n1); }
+.community-header { padding: 22px 24px 24px; }
+
+.discord-card {
+  margin: 0 20px 20px;
+  background: linear-gradient(145deg, #14102a, #0d0d1e);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: var(--r-xl);
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.1), 0 8px 32px rgba(99,102,241,0.08);
+}
+.discord-logo { font-size: 50px; margin-bottom: 16px; }
+.discord-title { font-family: var(--font-display); font-size: 21px; font-weight: 800; color: var(--n11); margin-bottom: 10px; letter-spacing: -0.01em; }
+.discord-sub { font-size: 14px; color: var(--n9); line-height: 1.6; margin-bottom: 24px; }
+
+.btn-discord {
+  width: 100%; padding: 16px;
+  border-radius: var(--r-lg);
+  background: #5865F2;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  border: none; cursor: pointer;
+  transition: all 200ms var(--ease);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(88,101,242,0.35);
+}
+.btn-discord:hover { background: #4752c4; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(88,101,242,0.45); }
+.btn-discord:active { opacity: 0.85; transform: scale(0.98); }
+
+.community-info { padding: 0 20px; }
+.community-tip {
+  background: var(--n3);
+  border-radius: var(--r-md);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-1);
+  border: 1px solid rgba(255,255,255,0.04);
+  transition: all 200ms var(--ease);
+}
+.community-tip:hover { background: var(--n4); }
+.community-tip-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--n11); margin-bottom: 7px; letter-spacing: -0.005em; }
+.community-tip-text { font-size: 13px; color: var(--n9); line-height: 1.55; }
+
+/* ── History ─────────────────────────────────────────────────────── */
+#screen-history { background: var(--n1); }
+.history-header { padding: 22px 24px 20px; }
+
+.section-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 20px; margin-bottom: 12px;
+}
+.section-pill-label { font-size: 10px; font-weight: 700; color: var(--n8); text-transform: uppercase; letter-spacing: 0.14em; white-space: nowrap; }
+.section-pill-line { flex: 1; height: 1px; background: var(--n5); }
+
+.history-list { padding: 0 20px; }
+.history-item {
+  background: var(--n3);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex; gap: 14px; align-items: center;
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  box-shadow: var(--shadow-1);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.history-item:hover { background: var(--n4); transform: translateY(-1px); box-shadow: var(--shadow-2); }
+.history-item:active { opacity: 0.8; transform: scale(0.99); }
+
+.history-icon {
+  width: 50px; height: 50px;
+  border-radius: var(--r-md);
+  background: var(--n4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  box-shadow: var(--shadow-1);
+}
+.history-content { flex: 1; }
+.history-strain { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--n11); letter-spacing: -0.01em; }
+.history-dates { font-size: 12px; color: var(--n9); margin-top: 3px; }
+.history-result { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+
+.empty-state {
+  padding: 56px 24px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.empty-icon { font-size: 52px; opacity: 0.35; }
+.empty-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--n9); letter-spacing: -0.01em; }
+.empty-sub { font-size: 13px; color: var(--n8); line-height: 1.6; max-width: 240px; }
+
+/* ── Shop ────────────────────────────────────────────────────────── */
+#screen-shop { background: var(--n1); }
+.shop-header { padding: 22px 24px 16px; }
+
+.shop-banner {
+  margin: 0 20px 20px;
+  background: linear-gradient(145deg, #180d14, #0e0c18);
+  border: 1px solid var(--pink-border);
+  border-radius: var(--r-xl);
+  padding: 22px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-pink);
+}
+.shop-banner::after {
+  content: '🍄';
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  font-size: 52px; opacity: 0.2;
+}
+.shop-banner-tag { font-size: 10px; font-weight: 700; color: var(--pink); text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 7px; }
+.shop-banner-title { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--n11); margin-bottom: 5px; letter-spacing: -0.01em; }
+.shop-banner-sub { font-size: 13px; color: var(--n9); margin-bottom: 16px; }
+
+.btn-sm {
+  display: inline-flex;
+  padding: 10px 18px;
+  border-radius: var(--r-sm);
+  background: var(--pink);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer;
+  transition: all 200ms var(--ease);
+  box-shadow: 0 3px 12px rgba(233,30,140,0.30);
+}
+.btn-sm:hover { background: var(--pink-hover); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(233,30,140,0.40); }
+.btn-sm:active { transform: scale(0.97); }
+
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; }
+.shop-card {
+  background: var(--n3);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  box-shadow: var(--shadow-2);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.shop-card:hover { background: var(--n4); transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.shop-card:active { transform: scale(0.97); }
+.shop-card-img {
+  width: 100%; aspect-ratio: 1;
+  background: var(--n4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px;
+}
+.shop-card-body { padding: 13px; }
+.shop-card-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--n11); margin-bottom: 4px; letter-spacing: -0.005em; }
+.shop-card-desc { font-size: 11px; color: var(--n9); line-height: 1.45; margin-bottom: 10px; }
+.shop-card-price { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--pink); letter-spacing: -0.01em; }
+
+/* ── Settings ────────────────────────────────────────────────────── */
+#screen-settings { background: var(--n1); }
+.settings-header { padding: 22px 24px 20px; }
+
+.settings-section { padding: 0 20px; margin-bottom: 28px; }
+.settings-section-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--n8);
+  text-transform: uppercase; letter-spacing: 0.16em;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+.settings-row {
+  background: var(--n3);
+  display: flex; align-items: center;
+  padding: 15px 16px;
+  margin-bottom: 1px;
+  cursor: pointer;
+  transition: background 150ms var(--ease);
+  gap: 13px;
+  border-left: 1px solid rgba(255,255,255,0.04);
+  border-right: 1px solid rgba(255,255,255,0.04);
+}
+.settings-row:first-of-type {
+  border-radius: var(--r-md) var(--r-md) 2px 2px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.settings-row:last-of-type {
+  border-radius: 2px 2px var(--r-md) var(--r-md);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.settings-row:only-child {
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.settings-row:hover { background: var(--n4); }
+.settings-row:active { opacity: 0.7; }
+
+.settings-icon { font-size: 18px; width: 26px; text-align: center; flex-shrink: 0; }
+.settings-label { flex: 1; font-size: 15px; color: var(--n11); font-weight: 500; }
+.settings-value { font-size: 14px; color: var(--n9); }
+.settings-arrow { color: var(--n7); font-size: 16px; font-weight: 400; }
+
+.toggle {
+  width: 46px; height: 27px;
+  background: var(--n6);
+  border-radius: 14px;
+  position: relative; cursor: pointer;
+  transition: background 250ms var(--ease);
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--pink); box-shadow: 0 0 12px rgba(233,30,140,0.25); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 21px; height: 21px;
+  border-radius: 50%;
+  background: #fff;
+  top: 3px; left: 3px;
+  transition: transform 250ms var(--ease-spring);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.toggle.on::after { transform: translateX(19px); }
+
+.danger-btn {
+  width: 100%; padding: 16px;
+  border-radius: var(--r-md);
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.danger-btn:hover { background: rgba(239,68,68,0.13); border-color: rgba(239,68,68,0.4); }
+.danger-btn:active { opacity: 0.7; transform: scale(0.98); }
+
+/* ── Modals ──────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  z-index: 500;
+  display: none;
+  align-items: flex-end;
+}
+.modal-overlay.visible { display: flex; }
+
+.modal-sheet {
+  width: 100%;
+  background: var(--n2);
+  border-radius: 28px 28px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 14px 24px 52px;
+  max-height: 90%;
+  overflow-y: auto;
+  animation: slideUp 0.36s var(--ease-spring) both;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+}
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--n6);
+  border-radius: 2px;
+  margin: 0 auto 22px;
+}
+
+.modal-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--pink); margin-bottom: 5px; }
+.modal-title { font-family: var(--font-display); font-size: 21px; font-weight: 800; color: var(--n11); margin-bottom: 5px; letter-spacing: -0.01em; }
+.modal-sub { font-size: 13px; color: var(--n9); margin-bottom: 18px; }
+
+.modal-status {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 13px; border-radius: 20px;
+  margin-bottom: 18px; font-size: 12px; font-weight: 700;
+  font-family: var(--font-display);
+}
+.modal-status.due { background: var(--pink-dim); color: var(--pink); border: 1px solid var(--pink-border); }
+.modal-status.upcoming { background: rgba(99,102,241,0.10); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.25); }
+.modal-status.done { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+
+.modal-phase-desc {
+  font-size: 13px; color: var(--n10); line-height: 1.65;
+  margin-bottom: 18px;
+  background: var(--n3);
+  padding: 16px;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.special-prompt {
+  background: rgba(233,30,140,0.06);
+  border: 1px solid var(--pink-border);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-bottom: 18px;
+  font-size: 13px; color: var(--pink); line-height: 1.55;
+}
+
+.checkin-question { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--n11); margin-bottom: 12px; letter-spacing: -0.005em; }
+
+.checkin-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.checkin-option {
+  padding: 13px 10px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--n6);
+  background: var(--n3);
+  text-align: center;
+  cursor: pointer;
+  font-size: 13px; color: var(--n10); font-weight: 500;
+  transition: all 200ms var(--ease);
+  line-height: 1.4;
+}
+.checkin-option:hover { background: var(--n4); border-color: var(--n7); }
+.checkin-option.selected { border-color: var(--pink); background: var(--pink-dim); color: var(--n11); box-shadow: 0 0 0 1px var(--pink-border); }
+
+.photo-upload-area {
+  border: 1.5px dashed var(--n7);
+  border-radius: var(--r-md);
+  padding: 28px 24px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 22px;
+  transition: all 200ms var(--ease);
+  background: rgba(255,255,255,0.02);
+}
+.photo-upload-area:hover { border-color: var(--pink); background: var(--pink-soft); }
+.photo-upload-area:active { border-color: var(--pink); }
+.photo-upload-icon { font-size: 30px; margin-bottom: 10px; }
+.photo-upload-text { font-size: 13px; color: var(--n9); }
+.photo-upload-text span { color: var(--pink); font-weight: 600; }
+
+.ci-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.ci-tag {
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: var(--n3);
+  border: 1px solid var(--n6);
+  font-size: 11px; font-weight: 600;
+  color: var(--n9);
+}
+
+/* ── Toast ───────────────────────────────────────────────────────── */
+.toast {
+  position: absolute;
+  bottom: calc(var(--nav-h) + 16px);
+  left: 20px; right: 20px;
+  background: rgba(20, 38, 20, 0.96);
+  border: 1px solid var(--green-border);
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 600;
+  color: var(--green);
+  z-index: 600;
+  opacity: 0; transform: translateY(10px);
+  transition: all 300ms var(--ease);
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-3);
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── Animations ──────────────────────────────────────────────────── */
+.fade-in { animation: fadeIn 0.45s var(--ease) both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.stagger-1 { animation-delay: 0.06s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.18s; }
+
+.spacer { height: 24px; }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-height: 870px) { body { align-items: flex-start; padding: 10px 0; overflow-y: auto; } }
+@media (max-width: 420px) { #app-shell { width: 100vw; height: 100dvh; border-radius: 0; } }
+</style>
+</head>
+<body>
+<div id="app-shell">
+
+
+
+<!-- WELCOME -->
+<div class="screen active" id="screen-welcome">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 32px">
+    <div class="welcome-logo"><img src="https://raw.githubusercontent.com/livekyn/SB-Guide/main/SB-Logo.png" alt="ShroomBloom" style="width:100%;height:100%;object-fit:contain;"></div>
+    <div class="welcome-eyebrow">Nublume Grow App</div>
+    <h1 class="welcome-title">Your First Grow<br>Starts <span>Now.</span></h1>
+    <p class="welcome-sub">We're pumped you're here. This app will guide you through every stage of your grow — from inoculation to harvest.</p>
+  </div>
+  <div style="padding:0 32px 52px;width:100%">
+    <button class="btn-primary" onclick="navTo('setup')">🌱 Start My First Grow</button>
+    <button class="btn-secondary" onclick="navTo('home')">Already growing? Continue</button>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="screen-setup">
+  <div class="setup-header">
+    <div class="back-btn" onclick="navTo('welcome')">&#8592;</div>
+    <div class="setup-step">Step 1 of 3 — Kit Setup</div>
+    <div class="setup-title">Let's Log Your Grow</div>
+    <div class="setup-sub">Tell us about your kit so we can build your custom check-in schedule.</div>
+  </div>
+  <div class="progress-steps">
+    <div class="progress-step done"></div>
+    <div class="progress-step done"></div>
+    <div class="progress-step"></div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Select Your Strain</label>
+    <div class="strain-search-wrap">
+      <input type="text" class="form-input" id="strain-input" placeholder="Search strain name..." autocomplete="off" oninput="filterStrains(this.value)" onfocus="openDropdown()" onblur="closeDropdownDelay()">
+      <div class="strain-dropdown" id="strain-dropdown"></div>
+    </div>
+  </div>
+  <div class="strain-badge-wrap" id="strain-badge-wrap" style="display:none">
+    <div class="strain-badge" id="strain-badge"></div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Inoculation Date (Start Date)</label>
+    <input type="date" class="form-input" id="inoc-date">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Grow Environment</label>
+    <select class="form-input" id="grow-env">
+      <option>Indoor — Climate Controlled</option>
+      <option>Indoor — Ambient</option>
+      <option>Garage / Shed</option>
+      <option>Outdoor (Seasonal)</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Name Your Grow (Optional)</label>
+    <input type="text" class="form-input" id="grow-name" placeholder="e.g. Batch #1 — Spring 2025">
+  </div>
+  <div class="setup-footer">
+    <button class="btn-primary" onclick="completeSetup()">Begin Grow Journey &#8594;</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="scroll-content">
+    <div class="home-header fade-in">
+      <div>
+        <div class="home-greeting" id="home-greeting">Day 0 of Grow</div>
+        <div class="home-name"><span class="grow-active-dot"></span><span id="home-strain-name">Golden Teacher</span></div>
+      </div>
+      <div class="avatar-btn" onclick="showModal('modal-notif')">&#128276;<div class="notif-dot"></div></div>
+    </div>
+    <div class="progress-ring-section fade-in stagger-1">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 110 110">
+          <circle class="ring-bg" cx="55" cy="55" r="45"/>
+          <circle class="ring-progress" id="main-ring" cx="55" cy="55" r="45"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-pct" id="ring-pct">0%</div>
+          <div class="ring-label">Progress</div>
+        </div>
+      </div>
+      <div class="ring-stats">
+        <div class="stat-row">
+          <div class="stat-label">Current Stage</div>
+          <div class="stat-value"><span class="stage-badge colonizing" id="stage-badge"><span class="stage-dot"></span>Colonizing</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Profile</div>
+          <div class="stat-value" id="profile-label">Standard</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Est. Harvest</div>
+          <div class="stat-value"><span id="days-left">—</span> <span class="stat-unit">days</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="streak-strip fade-in stagger-2">
+      <div class="streak-item"><div class="streak-num pink" id="stat-daysin">0</div><div class="streak-tag">Days In</div></div>
+      <div class="streak-item"><div class="streak-num" id="stat-checkins">0</div><div class="streak-tag">Check-Ins</div></div>
+      <div class="streak-item"><div class="streak-num green" id="stat-done">0</div><div class="streak-tag">Done</div></div>
+      <div class="streak-item"><div class="streak-num" id="stat-remaining">—</div><div class="streak-tag">Remaining</div></div>
+    </div>
+    <div class="checkin-banner fade-in stagger-2" id="next-checkin-banner" onclick="openNextCI()">
+      <div class="checkin-icon">&#128248;</div>
+      <div class="checkin-text">
+        <div class="checkin-title" id="next-ci-title">Next Check-In</div>
+        <div class="checkin-sub" id="next-ci-sub">Tap to view</div>
+      </div>
+      <div class="checkin-arrow">&#8250;</div>
+    </div>
+    <div class="section-header fade-in stagger-3">
+      <div class="section-title">Grow Calendar</div>
+      <div class="section-link" id="cal-month-label"></div>
+    </div>
+    <div class="calendar-wrap fade-in stagger-3">
+      <div class="cal-nav">
+        <div class="cal-arrow" onclick="calPrev()">&#8249;</div>
+        <div class="cal-month" id="cal-month-display">—</div>
+        <div class="cal-arrow" onclick="calNext()">&#8250;</div>
+      </div>
+      <div class="cal-days-header">
+        <div class="cal-day-label">Su</div><div class="cal-day-label">Mo</div>
+        <div class="cal-day-label">Tu</div><div class="cal-day-label">We</div>
+        <div class="cal-day-label">Th</div><div class="cal-day-label">Fr</div>
+        <div class="cal-day-label">Sa</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend">
+        <div class="legend-item"><div class="legend-dot s"></div>Start</div>
+        <div class="legend-item"><div class="legend-dot ci"></div>Check-In</div>
+        <div class="legend-item"><div class="legend-dot done"></div>Done</div>
+        <div class="legend-item"><div class="legend-dot today"></div>Today</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="nav('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L12 3L21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="nav('insights',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 21V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 21V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 21V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Insights</div></div>
+    <div class="nav-item" onclick="nav('community',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 11C5 11 6.5 13 8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 11C19 11 17.5 13 16 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 10 18 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 14 18 16 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="nav('history',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9H20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="13" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">History</div></div>
+    <div class="nav-item" onclick="nav('shop',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 7H21V21C21 21.55 20.55 22 20 22H4C3.45 22 3 21.55 3 21V7Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 7V5C7 4.45 7.45 4 8 4H16C16.55 4 17 4.45 17 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="nav('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 6L17.2 6.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.2 17.2L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 18L17.2 17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 6.8L6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Settings</div></div>
+  </div>
+  <div class="toast" id="toast-home">&#10003; Check-in saved!</div>
+</div>
+
+<!-- INSIGHTS -->
+<div class="screen" id="screen-insights">
+  <div class="scroll-content">
+    <div class="insights-header">
+      <div class="screen-title">Growth Insights</div>
+      <div class="screen-sub">Stage-based tips + AI photo analysis</div>
+    </div>
+    <div class="ai-analyze-card">
+      <div class="ai-badge">&#10022; AI Powered</div>
+      <div class="ai-title">Analyze Your Grow</div>
+      <div class="ai-sub">Upload a photo and our AI will assess contamination risk, colonization rate, and give personalized advice.</div>
+      <div class="upload-zone" onclick="triggerAI()">
+        <div class="upload-zone-icon">📷</div>
+        <div class="upload-zone-text"><span>Tap to upload</span> a photo of your kit</div>
+      </div>
+      <div class="ai-response-box" id="ai-response-box">
+        <div class="ai-response-label">&#10022; AI Analysis</div>
+        <div class="ai-response-text" id="ai-response-text"></div>
+      </div>
+    </div>
+    <div class="section-header"><div class="section-title">Stage Tips</div></div>
+    <div class="insights-list">
+      <div class="insight-card tip"><div class="insight-icon-wrap tip">🌡️</div><div class="insight-content"><div class="insight-stage">Colonization · Day 1–21</div><div class="insight-title">Ideal Temp: 75–80°F</div><div class="insight-text">Keep your kit in a warm, dark spot. Avoid direct sunlight. A seedling heat mat set to low works great.</div></div></div>
+      <div class="insight-card tip"><div class="insight-icon-wrap tip">💧</div><div class="insight-content"><div class="insight-stage">Colonization · Day 1–21</div><div class="insight-title">Don't Open Yet</div><div class="insight-text">Resist the urge to open the bag during colonization. The sealed environment is critical for contamination prevention.</div></div></div>
+      <div class="insight-card warning"><div class="insight-icon-wrap warning">⚠️</div><div class="insight-content"><div class="insight-stage">Watch For · Any Stage</div><div class="insight-title">Signs of Contamination</div><div class="insight-text">Green, black, or orange patches = mold. Pink or red discoloration = bacterial contamination. Act immediately.</div></div></div>
+      <div class="insight-card info"><div class="insight-icon-wrap info">📍</div><div class="insight-content"><div class="insight-stage">Pinning · Day 21–28</div><div class="insight-title">Initiate Fruiting</div><div class="insight-text">Once 70%+ colonized, introduce fresh air and indirect light to trigger pinning. Humidity is everything now.</div></div></div>
+      <div class="insight-card info locked"><div class="insight-icon-wrap info">🌿</div><div class="insight-content"><div class="insight-stage">Fruiting · Unlocks at Day 21</div><div class="insight-title">Harvest Timing</div><div class="insight-text">Locked — keep growing to unlock this tip.</div></div><div class="insight-lock">🔒</div></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="nav('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L12 3L21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="nav-label">Home</div></div>
+    <div class="nav-item active" onclick="nav('insights',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 21V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 21V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 21V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Insights</div></div>
+    <div class="nav-item" onclick="nav('community',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 11C5 11 6.5 13 8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 11C19 11 17.5 13 16 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 10 18 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 14 18 16 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="nav('history',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9H20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="13" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">History</div></div>
+    <div class="nav-item" onclick="nav('shop',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 7H21V21C21 21.55 20.55 22 20 22H4C3.45 22 3 21.55 3 21V7Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 7V5C7 4.45 7.45 4 8 4H16C16.55 4 17 4.45 17 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="nav('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 6L17.2 6.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.2 17.2L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 18L17.2 17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 6.8L6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Settings</div></div>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<div class="screen" id="screen-community">
+  <div class="scroll-content">
+    <div class="community-header">
+      <div class="screen-title">Community</div>
+      <div class="screen-sub">Connect with other ShroomBloom growers</div>
+    </div>
+    <div class="discord-card">
+      <div class="discord-logo">💬</div>
+      <div class="discord-title">Join Our Discord</div>
+      <div class="discord-sub">Get real-time help, share your grows, troubleshoot issues, and connect with thousands of mushroom enthusiasts.</div>
+      <button class="btn-discord" onclick="window.open('https://discord.gg/shroombloom','_blank')">🔗 Join ShroomBloom Discord</button>
+    </div>
+    <div class="community-info">
+      <div class="community-tip"><div class="community-tip-title">📸 Share Your Progress</div><div class="community-tip-text">Post photos of your grow in #grow-journal and get feedback from experienced cultivators in our community.</div></div>
+      <div class="community-tip"><div class="community-tip-title">🆘 Need Help?</div><div class="community-tip-text">Spotted contamination or something looks off? Post in #troubleshooting for fast support from our team and community.</div></div>
+      <div class="community-tip"><div class="community-tip-title">🏆 Show Off Your Harvest</div><div class="community-tip-text">Proud of your haul? Share it in #harvest-wins and inspire other growers with your results.</div></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="nav('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L12 3L21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="nav('insights',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 21V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 21V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 21V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Insights</div></div>
+    <div class="nav-item active" onclick="nav('community',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 11C5 11 6.5 13 8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 11C19 11 17.5 13 16 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 10 18 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 14 18 16 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="nav('history',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9H20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="13" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">History</div></div>
+    <div class="nav-item" onclick="nav('shop',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 7H21V21C21 21.55 20.55 22 20 22H4C3.45 22 3 21.55 3 21V7Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 7V5C7 4.45 7.45 4 8 4H16C16.55 4 17 4.45 17 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="nav('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 6L17.2 6.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.2 17.2L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 18L17.2 17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 6.8L6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Settings</div></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="scroll-content">
+    <div class="history-header">
+      <div class="screen-title">Grow History</div>
+      <div class="screen-sub">All your grows in one place</div>
+    </div>
+    <div class="section-pill"><div class="section-pill-label">Active</div><div class="section-pill-line"></div></div>
+    <div class="history-list" id="history-active"></div>
+    <div class="section-pill" style="margin-top:8px"><div class="section-pill-label">Completed</div><div class="section-pill-line"></div></div>
+    <div class="history-list" id="history-completed">
+      <div class="empty-state">
+        <div class="empty-icon">🍄</div>
+        <div class="empty-title">No completed grows yet</div>
+        <div class="empty-sub">Your finished grows will appear here once you complete your first harvest.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="nav('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L12 3L21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="nav('insights',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 21V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 21V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 21V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Insights</div></div>
+    <div class="nav-item" onclick="nav('community',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 11C5 11 6.5 13 8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 11C19 11 17.5 13 16 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 10 18 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 14 18 16 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Community</div></div>
+    <div class="nav-item active" onclick="nav('history',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9H20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="13" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">History</div></div>
+    <div class="nav-item" onclick="nav('shop',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 7H21V21C21 21.55 20.55 22 20 22H4C3.45 22 3 21.55 3 21V7Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 7V5C7 4.45 7.45 4 8 4H16C16.55 4 17 4.45 17 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="nav('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 6L17.2 6.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.2 17.2L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 18L17.2 17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 6.8L6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Settings</div></div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="screen" id="screen-shop">
+  <div class="scroll-content">
+    <div class="shop-header">
+      <div class="screen-title">Shop</div>
+      <div class="screen-sub">Restock &amp; upgrade your grow</div>
+    </div>
+    <div class="shop-banner">
+      <div class="shop-banner-tag">🎉 You're Almost Done</div>
+      <div class="shop-banner-title">Ready for Flush 2?</div>
+      <div class="shop-banner-sub">Rehydrate your block and get a second harvest.</div>
+      <button class="btn-sm">Learn How &#8594;</button>
+    </div>
+    <div class="section-header" style="margin-top:16px"><div class="section-title">Kits &amp; Supplies</div><div class="section-link">View All</div></div>
+    <div class="shop-grid">
+      <div class="shop-card"><div class="shop-card-img">🍄</div><div class="shop-card-body"><div class="shop-card-name">Golden Teacher</div><div class="shop-card-desc">Our bestseller. Perfect for beginners.</div><div class="shop-card-price">$34.99</div></div></div>
+      <div class="shop-card"><div class="shop-card-img">🌿</div><div class="shop-card-body"><div class="shop-card-name">Blue Oyster</div><div class="shop-card-desc">Fast colonizer, massive yields.</div><div class="shop-card-price">$29.99</div></div></div>
+      <div class="shop-card"><div class="shop-card-img">🦁</div><div class="shop-card-body"><div class="shop-card-name">Lion's Mane</div><div class="shop-card-desc">Brain-boosting adaptogen mushroom.</div><div class="shop-card-price">$39.99</div></div></div>
+      <div class="shop-card"><div class="shop-card-img">💧</div><div class="shop-card-body"><div class="shop-card-name">Humidity Pack</div><div class="shop-card-desc">Maintain perfect RH for fruiting.</div><div class="shop-card-price">$12.99</div></div></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="nav('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L12 3L21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="nav('insights',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 21V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 21V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 21V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Insights</div></div>
+    <div class="nav-item" onclick="nav('community',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 11C5 11 6.5 13 8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 11C19 11 17.5 13 16 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 10 18 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 14 18 16 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="nav('history',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9H20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="13" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">History</div></div>
+    <div class="nav-item active" onclick="nav('shop',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 7H21V21C21 21.55 20.55 22 20 22H4C3.45 22 3 21.55 3 21V7Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 7V5C7 4.45 7.45 4 8 4H16C16.55 4 17 4.45 17 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Shop</div></div>
+    <div class="nav-item" onclick="nav('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 6L17.2 6.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.2 17.2L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 18L17.2 17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 6.8L6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Settings</div></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="screen-settings">
+  <div class="scroll-content">
+    <div class="settings-header">
+      <div class="screen-title">Settings</div>
+      <div class="screen-sub">Manage your grow &amp; account</div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Current Grow</div>
+      <div class="settings-row"><div class="settings-icon">🍄</div><div class="settings-label" id="settings-strain">Golden Teacher</div><div class="settings-arrow">›</div></div>
+      <div class="settings-row"><div class="settings-icon">📅</div><div class="settings-label">Inoculation Date</div><div class="settings-value" id="settings-inocdate">—</div><div class="settings-arrow">›</div></div>
+      <div class="settings-row"><div class="settings-icon">🏃</div><div class="settings-label">Speed Profile</div><div class="settings-value" id="settings-profile">Standard</div></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Notifications</div>
+      <div class="settings-row"><div class="settings-icon">🔔</div><div class="settings-label">Check-In Reminders</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div class="settings-icon">📊</div><div class="settings-label">Weekly Progress Summary</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div class="settings-icon">🛍️</div><div class="settings-label">Shop Deals &amp; Restocks</div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Account</div>
+      <div class="settings-row"><div class="settings-icon">👤</div><div class="settings-label">Profile</div><div class="settings-arrow">›</div></div>
+      <div class="settings-row"><div class="settings-icon">🔒</div><div class="settings-label">Privacy</div><div class="settings-arrow">›</div></div>
+      <div class="settings-row"><div class="settings-icon">⭐</div><div class="settings-label">Rate Nublume</div><div class="settings-arrow">›</div></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Danger Zone</div>
+      <button class="danger-btn" onclick="confirmReset()">🗑️ Delete Grow &amp; Start Fresh</button>
+    </div>
+    <div style="text-align:center;padding:8px 24px 16px">
+      <div style="font-size:12px;color:var(--text-dim)">Nublume Grow App v2.0</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Made with ❤️ by Nublume</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="nav('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L12 3L21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 21V15H15V21" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="nav('insights',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 21V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 21V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 21V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Insights</div></div>
+    <div class="nav-item" onclick="nav('community',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 11C5 11 6.5 13 8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 11C19 11 17.5 13 16 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 10 18 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 16.5C12 16.5 14 18 16 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="nav('history',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9H20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="13" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">History</div></div>
+    <div class="nav-item" onclick="nav('shop',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 7H21V21C21 21.55 20.55 22 20 22H4C3.45 22 3 21.55 3 21V7Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 7V5C7 4.45 7.45 4 8 4H16C16.55 4 17 4.45 17 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Shop</div></div>
+    <div class="nav-item active" onclick="nav('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 6L17.2 6.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7.2 17.2L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 18L17.2 17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 6.8L6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="nav-label">Settings</div></div>
+  </div>
+</div>
+
+<!-- CHECK-IN MODAL -->
+<div class="modal-overlay" id="modal-checkin" onclick="closeModalBg(event,'modal-checkin')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-eyebrow" id="ci-eyebrow">Check-In</div>
+    <div class="modal-title" id="ci-title">Day 0 Check-In</div>
+    <div class="modal-sub" id="ci-sub">Tap to review</div>
+    <div class="modal-status due" id="ci-status">&#9679; Due Now</div>
+    <div class="modal-phase-desc" id="ci-desc">Loading...</div>
+    <div id="ci-special" class="special-prompt" style="display:none"></div>
+    <div class="ci-tags" id="ci-tags"></div>
+    <div class="checkin-question">How does your kit look?</div>
+    <div class="checkin-options">
+      <div class="checkin-option" onclick="selectOpt(this)">✅ Looks great</div>
+      <div class="checkin-option" onclick="selectOpt(this)">🐢 Slower than expected</div>
+      <div class="checkin-option" onclick="selectOpt(this)">⚠️ Seeing discoloration</div>
+      <div class="checkin-option" onclick="selectOpt(this)">❓ Not sure</div>
+    </div>
+    <div class="checkin-question">Upload Your Photo</div>
+    <div class="photo-upload-area">
+      <div class="photo-upload-icon">📷</div>
+      <div class="photo-upload-text"><span>Tap to add photo</span> from camera or library</div>
+    </div>
+    <button class="btn-primary" id="ci-btn" onclick="saveCI()">Mark Complete ✓</button>
+    <button class="btn-secondary" onclick="closeModal('modal-checkin')" style="margin-top:10px">Back to Calendar</button>
+  </div>
+</div>
+
+<!-- NOTIF MODAL -->
+<div class="modal-overlay" id="modal-notif" onclick="closeModalBg(event,'modal-notif')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Notifications</div>
+    <div class="modal-sub">What's happening with your grow</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="insight-card info" style="margin:0"><div class="insight-icon-wrap info">📅</div><div class="insight-content"><div class="insight-stage">Upcoming</div><div class="insight-title" id="notif-next-title">Next Check-In</div><div class="insight-text" id="notif-next-sub">Check your calendar.</div></div></div>
+      <div class="insight-card tip" style="margin:0"><div class="insight-icon-wrap tip">🌡️</div><div class="insight-content"><div class="insight-stage">Grow Tip</div><div class="insight-title">Keep It Warm &amp; Dark</div><div class="insight-text">Optimal colonization happens between 75–80°F in total darkness. Avoid drafts.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div class="modal-overlay" id="modal-reset" onclick="closeModalBg(event,'modal-reset')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:#FF3B30">Delete Grow?</div>
+    <div class="modal-sub">This will permanently delete your current grow data. This cannot be undone.</div>
+    <div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px">
+      <div style="font-size:13px;color:#FF3B30;font-weight:600" id="reset-grow-label">Current Grow</div>
+      <div style="font-size:12px;color:var(--gray);margin-top:4px" id="reset-grow-sub">All data will be lost</div>
+    </div>
+    <button class="danger-btn" onclick="doReset()" style="margin-bottom:12px">Yes, Delete Everything</button>
+    <button class="btn-secondary" onclick="closeModal('modal-reset')">Cancel</button>
+  </div>
+</div>
+
+</div><!-- end app-shell -->
+<script>
+const STRAINS=[
+  // STANDARD TIMELINE
+  {name:'Golden Teacher',p:'standard',sp:null},
+  {name:'B+',p:'standard',sp:null},
+  {name:'Penis Envy',p:'standard',sp:'pe'},
+  {name:'Amazonian',p:'standard',sp:null},
+  {name:'Mazatapec',p:'standard',sp:null},
+  {name:'Albino A+',p:'standard',sp:null},
+  {name:'Tidal Wave',p:'standard',sp:null},
+  {name:'Hillbilly',p:'standard',sp:null},
+  {name:'Melmac',p:'standard',sp:null},
+  {name:'Ecuador',p:'standard',sp:null},
+  {name:'Brazilian',p:'standard',sp:null},
+  {name:'Puerto Rican',p:'standard',sp:null},
+  {name:'Transkei',p:'standard',sp:null},
+  {name:'Alacabenzi',p:'standard',sp:null},
+  {name:'Blue Meanie',p:'standard',sp:null},
+  {name:'Jack Frost',p:'standard',sp:null},
+  {name:'Pink Buffalo',p:'standard',sp:null},
+  {name:'Orissa India',p:'standard',sp:null},
+  {name:'Daddy Long Legs',p:'standard',sp:null},
+  {name:'Lizard King',p:'standard',sp:null},
+  {name:'Wavy Z',p:'standard',sp:null},
+  {name:'Thai Elephant Dung',p:'standard',sp:null},
+  {name:'Allen Strain',p:'standard',sp:null},
+  {name:'Mexicana',p:'standard',sp:null},
+  {name:'Huautla',p:'standard',sp:null},
+  {name:'Lipa Yai',p:'standard',sp:null},
+  {name:'Creeper',p:'standard',sp:null},
+  {name:'Leucistic Golden Teacher',p:'standard',sp:null},
+  {name:'True Albino Teacher',p:'standard',sp:null},
+  {name:'Colombian',p:'standard',sp:null},
+  {name:'Texas Yellow Cap',p:'standard',sp:null},
+  {name:'Gulf Coast',p:'standard',sp:null},
+  {name:'Syzygy',p:'standard',sp:null},
+  
+  // FAST TRACK
+  {name:'Cambodian',p:'fast',sp:null},
+  {name:'Burma',p:'fast',sp:'burma'},
+  {name:'Koh Samui',p:'fast',sp:null},
+  {name:'Koh Samui Super Strain',p:'fast',sp:null},
+  
+  // SLOW TRACK (APE)
+  {name:'Albino Penis Envy',p:'slow',sp:'ape'},
+  {name:'Melmac PE Revert',p:'slow',sp:null},
+  {name:'Yeti',p:'slow',sp:null},
+  {name:'Azul APE',p:'slow',sp:'azulape'},
+  {name:'Penis Envy Uncut',p:'slow',sp:null},
+  {name:'Penis Envy #6',p:'slow',sp:null},
+  {name:'Tidalwave PE',p:'slow',sp:null},
+  {name:'South American PE',p:'slow',sp:null},
+  
+  // ENIGMA UNIQUE
+  {name:'Enigma',p:'enigma',sp:'enigma'},
+  {name:'Enigma × B+',p:'enigma',sp:'enigma'},
+  
+  // FALLBACK
+  {name:'Strain not listed / Unknown',p:'standard',sp:null},
+];
+
+const PROFILES={
+  standard:{label:'Standard',days:52,checkins:[0,4,9,14,21,29,33,38,44,52,68],steps:[
+    {title:'Inoculation Day',phase:'Colonization',detail:'Your substrate has just been inoculated. Seal everything up, keep it warm (75-80F) and dark. Do not disturb.',tags:['Day 0','Colonization']},
+    {title:'Early Colonization Check',phase:'Colonization',detail:'Look for the first signs of white mycelium spreading from inoculation points. Small fluffy patches are a great sign.',tags:['Day 4','Colonization']},
+    {title:'Colonization Progress',phase:'Colonization',detail:'Mycelium should be visibly spreading. 20-40% coverage is normal at this stage. No green, no yellow — just bright white.',tags:['Day 9','Colonization']},
+    {title:'Mid Colonization',phase:'Colonization',detail:'Expect 40-70% coverage. The bag or block should look increasingly white and fluffy. Keep temps stable.',tags:['Day 14','Colonization']},
+    {title:'Full Colonization Check',phase:'Colonization',detail:'You should be at 80-100% colonization. If not fully covered, give it more time. Do not rush fruiting initiation.',tags:['Day 21','Colonization']},
+    {title:'Fruiting Initiation',phase:'Fruiting Init',detail:'Time to trigger pins! Lower temps to 70-75F, introduce fresh air exchange (FAE), and add indirect light. Humidity to 90-95%.',tags:['Day 29','Fruiting Init']},
+    {title:'First Pins Check',phase:'Pinning',detail:'Tiny pins should be forming — white or grey dots across the surface. Do not disturb. Maintain high humidity and FAE.',tags:['Day 33','Pinning']},
+    {title:'Pin Development',phase:'Pinning',detail:'Pins are growing into young mushrooms. Veils should still be intact. Harvest just before or as veils begin to break.',tags:['Day 38','Pinning']},
+    {title:'Harvest Window',phase:'Harvest',detail:'Most mushrooms should have caps spread but veils still intact or just breaking. Harvest by gently twisting and pulling each cluster.',tags:['Day 44','Harvest']},
+    {title:'First Flush Complete',phase:'Post-Harvest',detail:'Great work! Remove all remaining pins, let the block rest and rehydrate (dunk or mist). Second flush in 7-14 days.',tags:['Day 52','Post-Harvest']},
+    {title:'Second Flush Check',phase:'Flush 2',detail:'Second flush pins should be forming after rest. Second flushes can be just as productive — sometimes more so!',tags:['Day 68','Flush 2']},
+  ]},
+  fast:{label:'Fast',days:38,checkins:[0,3,6,9,14,20,23,28,33,38,55],steps:[
+    {title:'Inoculation Day',phase:'Colonization',detail:'Substrate inoculated. Seal up and keep at 75-80F in the dark. Fast strains colonize aggressively — stay patient.',tags:['Day 0','Fast']},
+    {title:'Early Colonization',phase:'Colonization',detail:'Fast strains show mycelium quickly. Expect visible growth within 72 hours. Look for dense white growth.',tags:['Day 3','Colonization']},
+    {title:'Rapid Growth Check',phase:'Colonization',detail:'50-70% colonization expected. Fast strains can fully colonize in under 2 weeks under ideal conditions.',tags:['Day 6','Colonization']},
+    {title:'Full Colonization',phase:'Colonization',detail:'Should be at or near 100% colonization. Dense, rope-like mycelium is normal for fast strains. Watch for yellowing metabolites.',tags:['Day 9','Colonization']},
+    {title:'Pre-Fruiting Check',phase:'Fruiting Init',detail:'Begin fruiting initiation: lower temps, introduce FAE, add light. Pins should appear within days of triggering.',tags:['Day 14','Fruiting Init']},
+    {title:'First Pins',phase:'Pinning',detail:'Pins are forming rapidly. Maintain 90%+ humidity. Fast strains often produce dense pin sets — space is important for development.',tags:['Day 20','Pinning']},
+    {title:'Pin Development',phase:'Pinning',detail:'Pins developing fast. Monitor veil integrity closely — fast strains can go from pin to harvest-ready in days.',tags:['Day 23','Pinning']},
+    {title:'Harvest Window',phase:'Harvest',detail:"Harvest as veils begin to break or just before. Fast strains = fast harvests. Don't wait too long or spores will drop.",tags:['Day 28','Harvest']},
+    {title:'First Flush Complete',phase:'Post-Harvest',detail:'Clean up the block, rehydrate, and wait for second flush. Fast strains often produce multiple flushes quickly.',tags:['Day 33','Post-Harvest']},
+    {title:'Second Flush',phase:'Flush 2',detail:'Second flush check — fast strains can produce 3-4 productive flushes when managed well.',tags:['Day 38','Flush 2']},
+    {title:'Extended Flush Check',phase:'Flush 3+',detail:"If still producing, you're in bonus territory! Continue rehydration cycles as long as the block is producing.",tags:['Day 55','Flush 3+']},
+  ]},
+  slow:{label:'Slow',days:75,checkins:[0,7,12,19,24,32,42,46,58,67,75],steps:[
+    {title:'Inoculation Day',phase:'Colonization',detail:'APE/PE strains are notoriously slow colonizers. Be patient — this is normal. Keep at 78-82F for best results.',tags:['Day 0','Slow']},
+    {title:'Early Colonization',phase:'Colonization',detail:"Initial mycelium growth should be visible. PE strains grow slower but thicker, rope-like mycelium. Don't panic if growth seems slow.",tags:['Day 7','Colonization']},
+    {title:'Colonization Progress',phase:'Colonization',detail:'20-40% colonization expected. PE mycelium often looks more dense and "ropy" compared to other strains — this is normal and healthy.',tags:['Day 12','Colonization']},
+    {title:'Mid Colonization',phase:'Colonization',detail:'Steady growth continues. PE strains may show some blue bruising (oxidation) — this is normal, not contamination.',tags:['Day 19','Colonization']},
+    {title:'Full Colonization Check',phase:'Colonization',detail:'PE strains take longer — 60-80% is fine at this point. Let it fully consolidate before triggering. Patience pays off with PE.',tags:['Day 24','Colonization']},
+    {title:'Full Colonization',phase:'Colonization',detail:'Should be at 90-100% now. PE mycelium will look very dense. Some yellowing is normal metabolite release — not contamination.',tags:['Day 32','Colonization']},
+    {title:'Fruiting Initiation',phase:'Fruiting Init',detail:'Begin fruiting conditions. PE pins are smaller and more scattered than other strains. Drop temp slightly, increase FAE and indirect light.',tags:['Day 42','Fruiting Init']},
+    {title:'First Pins Check',phase:'Pinning',detail:'PE pins are tiny and can be easy to miss. Look closely — small grey or white bumps on the surface. Maintain very high humidity.',tags:['Day 46','Pinning']},
+    {title:'Harvest Window',phase:'Harvest',detail:'PE mushrooms should be ready — thick stems and small caps are characteristic. Harvest before or as veils break. These will be potent.',tags:['Day 58','Harvest']},
+    {title:'First Flush Complete',phase:'Post-Harvest',detail:'Excellent! PE first flushes can be smaller in number but very dense. Rehydrate thoroughly — PE loves a good dunk.',tags:['Day 67','Post-Harvest']},
+    {title:'Second Flush Check',phase:'Flush 2',detail:'PE strains can produce a solid second flush with proper rehydration. Worth the wait — second PE flushes are often the heaviest.',tags:['Day 75','Flush 2']},
+  ]},
+  enigma:{label:'Enigma',days:72,checkins:[0,7,14,21,35,46,49,60,72],steps:[
+    {title:'Inoculation Day',phase:'Colonization',detail:'Enigma is a non-sporulating mutant — it does not pin like other strains. It grows as a dense, cauliflower-like blob. Normal colonization rules apply.',tags:['Day 0','Enigma']},
+    {title:'Early Colonization',phase:'Colonization',detail:'Watch for thick, rope-like mycelial growth. Enigma colonizes with a distinctive texture — denser than typical strains.',tags:['Day 7','Colonization']},
+    {title:'Colonization Progress',phase:'Colonization',detail:'Mycelium should be spreading aggressively. Enigma often shows unique patterns — knots, thick clusters. This is all normal.',tags:['Day 14','Colonization']},
+    {title:'Full Colonization Check',phase:'Colonization',detail:'Enigma fully colonized substrate. Look for dense, consolidated white mass. No green, no soft spots.',tags:['Day 21','Colonization']},
+    {title:'Pre-Blob Stage',phase:'Blob Forming',detail:'Enigma does NOT form pins. Instead, look for a dense, cauliflower-like growth forming on the surface. This is the "blob" — totally normal!',tags:['Day 35','Blob Forming']},
+    {title:'Blob Development',phase:'Blob Forming',detail:'The enigma blob is growing. It may look alien — dense, wrinkled, white-to-grey mass. Maintain high humidity. Do not rush it.',tags:['Day 46','Blob Forming']},
+    {title:'Blob Maturation',phase:'Blob Mature',detail:'Blob is maturing. It should be dense and firm. When it starts to show blue or grey hints, harvest time is near.',tags:['Day 49','Blob Mature']},
+    {title:'Harvest Window',phase:'Harvest',detail:'Harvest the enigma blob when it reaches full size and before it begins to soften or discolor. Cut or twist the entire mass off cleanly.',tags:['Day 60','Harvest']},
+    {title:'Post-Harvest Check',phase:'Post-Harvest',detail:'After removing the blob, clean the surface and rehydrate. Enigma can produce additional blobs from the same substrate — keep going!',tags:['Day 72','Post-Harvest']},
+  ]},
+};
+
+const SPECIAL_PROMPTS={
+  pe:{day:32,msg:'🐌 PE Patience Tip: Penis Envy strains take up to 50% longer than average to colonize. Slow growth is normal — don\'t mistake thoroughness for trouble. Keep temps at 78F+ and give it time.'},
+  burma:{day:6,msg:'⚠️ Burma Premature Pin Warning: Burma strains can pin prematurely during colonization. If you see tiny pins forming before 80% colonization, reduce light exposure immediately and keep temps stable.'},
+  ape:{day:58,msg:'🔬 APE Patience Tip: Albino Penis Envy produces smaller but extremely dense fruiting bodies. Tiny albino pins can be hard to spot — look closely at the surface for small white bumps.'},
+  azulape:{day:42,msg:'🐌 Azul APE Extra Slow: Azurescens-influenced genetics mean this strain may take 60-90 days total. What looks like stalled growth is often normal consolidation. Do not disturb.'},
+  enigma:{day:60,msg:'🔵 Enigma Blob Explained: Enigma is a non-sporulating mutant that grows as a cauliflower-like mass ("blob") instead of traditional mushrooms. This is 100% normal and expected — harvest the whole mass when mature.'},
+};
+
+const G={strainName:'Golden Teacher',profile:'standard',sp:null,inocDate:new Date(),done:[],activeCI:null};
+const TODAY=new Date(); TODAY.setHours(0,0,0,0);
+let calY=TODAY.getFullYear(),calM=TODAY.getMonth();
+let selectedStrain=null;
+
+function navTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  // Sync nav item active state across all bottom navs
+  document.querySelectorAll('.nav-item').forEach(ni=>{
+    const oc=ni.getAttribute('onclick')||'';
+    if(oc.includes("'"+id+"'"))ni.classList.add('active');
+    else ni.classList.remove('active');
+  });
+  if(id==='setup'){const d=document.getElementById('inoc-date');if(!d.value)d.value=TODAY.toISOString().split('T')[0];buildDropdown('');}
+  if(id==='home')initHome();
+}
+
+function nav(screenName,el){
+  navTo(screenName);
+}
+
+function buildDropdown(query){
+  const dd=document.getElementById('strain-dropdown');
+  const q=query.toLowerCase();
+  const filtered=q?STRAINS.filter(s=>s.name.toLowerCase().includes(q)):STRAINS;
+  dd.innerHTML=filtered.map(s=>`<div class="strain-opt" onmousedown="pickStrain('${s.name.replace(/'/g,"\\'")}','${s.p}','${s.sp||''}')"><span class="strain-opt-name">${s.name}</span><span class="strain-opt-profile ${s.p}">${PROFILES[s.p].label}</span></div>`).join('');
+}
+
+function filterStrains(q){buildDropdown(q);document.getElementById('strain-dropdown').classList.add('open');}
+function openDropdown(){buildDropdown(document.getElementById('strain-input').value);document.getElementById('strain-dropdown').classList.add('open');}
+function closeDropdownDelay(){setTimeout(()=>document.getElementById('strain-dropdown').classList.remove('open'),200);}
+
+function pickStrain(name,profile,sp){
+  selectedStrain={name,profile,sp:sp||null};
+  document.getElementById('strain-input').value=name;
+  document.getElementById('strain-dropdown').classList.remove('open');
+  const bw=document.getElementById('strain-badge-wrap');
+  const b=document.getElementById('strain-badge');
+  bw.style.display='';
+  b.className='strain-badge '+profile;
+  b.textContent=PROFILES[profile].label+' Profile';
+}
+
+function completeSetup(){
+  if(!selectedStrain)selectedStrain={name:'Golden Teacher',profile:'standard',sp:null};
+  G.strainName=selectedStrain.name;
+  G.profile=selectedStrain.profile;
+  G.sp=selectedStrain.sp;
+  G.done=[];
+  const dateVal=document.getElementById('inoc-date').value;
+  if(dateVal){const[y,m,d]=dateVal.split('-').map(Number);G.inocDate=new Date(y,m-1,d);}
+  else G.inocDate=new Date(TODAY);
+  G.inocDate.setHours(0,0,0,0);
+  calY=G.inocDate.getFullYear();calM=G.inocDate.getMonth();
+  updateSettings();navTo('home');
+}
+
+function addDays(date,n){const d=new Date(date);d.setDate(d.getDate()+n);return d;}
+
+function initHome(){
+  const prof=PROFILES[G.profile];
+  const daysSince=Math.floor((TODAY-G.inocDate)/86400000);
+  
+  // Calculate progress based on completed check-ins
+  const totalCheckins=prof.checkins.length;
+  const completedCheckins=G.done.length;
+  const pct=Math.round((completedCheckins/totalCheckins)*100);
+  
+  // Update ring progress - cap at 100%
+  const ringPct=Math.min(100,pct);
+  const offset=283-(ringPct/100)*283;
+  const ring=document.getElementById('main-ring');
+  ring.style.strokeDashoffset=offset;
+  
+  // Update ring color - green and glowing when complete (100%)
+  if(ringPct>=100){
+    // Glowing green at 100%
+    ring.style.stroke='var(--green)';
+    ring.style.filter='drop-shadow(0 0 12px var(--green))';
+  }else{
+    // Pink progress
+    ring.style.stroke='var(--pink)';
+    ring.style.filter='drop-shadow(0 0 6px var(--pink))';
+  }
+  
+  document.getElementById('ring-pct').textContent=pct+'%';
+  document.getElementById('home-strain-name').textContent=G.strainName;
+  document.getElementById('home-greeting').textContent=daysSince>=0?'Day '+daysSince+' of Grow':'Grow Starting Soon';
+  const sb=document.getElementById('stage-badge');
+  let sc='colonizing',sl='Colonizing';
+  if(daysSince>prof.days*0.8){sc='fruiting';sl='Fruiting/Harvest';}
+  else if(daysSince>prof.days*0.5){sc='pinning';sl='Pinning';}
+  sb.className='stage-badge '+sc;
+  sb.innerHTML='<span class="stage-dot"></span>'+sl;
+  document.getElementById('profile-label').textContent=prof.label;
+  document.getElementById('days-left').textContent=Math.max(0,prof.days-daysSince);
+  document.getElementById('stat-daysin').textContent=Math.max(0,daysSince);
+  document.getElementById('stat-checkins').textContent=prof.checkins.length;
+  document.getElementById('stat-done').textContent=G.done.length;
+  document.getElementById('stat-remaining').textContent=Math.max(0,prof.checkins.length-G.done.length);
+  const nextCI=getNextCI();
+  if(nextCI!==null){
+    const ciDate=addDays(G.inocDate,nextCI);
+    const diff=Math.floor((ciDate-TODAY)/86400000);
+    document.getElementById('next-ci-title').textContent='Day '+nextCI+' Check-In';
+    if(diff<0)document.getElementById('next-ci-sub').textContent='Overdue — '+Math.abs(diff)+'d ago';
+    else if(diff===0)document.getElementById('next-ci-sub').textContent='Due today!';
+    else document.getElementById('next-ci-sub').textContent='In '+diff+' day'+(diff!==1?'s':'');
+  }else{
+    document.getElementById('next-ci-title').textContent='All Check-Ins Complete!';
+    document.getElementById('next-ci-sub').textContent='Great work on this grow 🍄';
+  }
+  updateHistoryActive();
+  buildCalendar(calY,calM);
+}
+
+function getNextCI(){return PROFILES[G.profile].checkins.find(d=>!G.done.includes(d))??null;}
+
+function openNextCI(){const n=getNextCI();if(n!==null)openCI(n);}
+
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function buildCalendar(y,m){
+  document.getElementById('cal-month-display').textContent=MONTHS[m]+' '+y;
+  document.getElementById('cal-month-label').textContent=MONTHS[m]+' '+y;
+  const grid=document.getElementById('cal-grid');grid.innerHTML='';
+  const prof=PROFILES[G.profile];
+  const firstDay=new Date(y,m,1).getDay();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const daysInPrev=new Date(y,m,0).getDate();
+  function isSame(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+  const ciDates=prof.checkins.map(offset=>({offset,date:addDays(G.inocDate,offset)}));
+  for(let i=firstDay-1;i>=0;i--){const c=document.createElement('div');c.className='cal-cell other-month';c.textContent=daysInPrev-i;grid.appendChild(c);}
+  for(let d=1;d<=daysInMonth;d++){
+    const cell=document.createElement('div');
+    const date=new Date(y,m,d);date.setHours(0,0,0,0);
+    let cls='cal-cell';
+    const isStart=isSame(date,G.inocDate);
+    const isToday=isSame(date,TODAY);
+    const matchCI=ciDates.find(ci=>isSame(ci.date,date));
+    if(isStart)cls+=' startd';
+    else if(matchCI){
+      if(G.done.includes(matchCI.offset))cls+=' doned';
+      else if(date<=TODAY)cls+=' cid';
+      else cls+=' cid-future';
+    }else if(isToday)cls+=' today';
+    cell.className=cls;cell.textContent=d;
+    if(matchCI){const mo=matchCI.offset;cell.onclick=()=>openCI(mo);}
+    grid.appendChild(cell);
+  }
+  const total=firstDay+daysInMonth;const rem=total%7===0?0:7-(total%7);
+  for(let d=1;d<=rem;d++){const c=document.createElement('div');c.className='cal-cell other-month';c.textContent=d;grid.appendChild(c);}
+}
+
+function calPrev(){calM--;if(calM<0){calM=11;calY--;}buildCalendar(calY,calM);}
+function calNext(){calM++;if(calM>11){calM=0;calY++;}buildCalendar(calY,calM);}
+
+function openCI(dayOffset){
+  G.activeCI=dayOffset;
+  const prof=PROFILES[G.profile];
+  const stepIdx=prof.checkins.indexOf(dayOffset);
+  const step=prof.steps[stepIdx]||{title:'Day '+dayOffset,phase:'Check-In',detail:'Log your grow status.',tags:[]};
+  const ciDate=addDays(G.inocDate,dayOffset);
+  const isDone=G.done.includes(dayOffset);
+  const diff=Math.floor((ciDate-TODAY)/86400000);
+  document.getElementById('ci-eyebrow').textContent='Day '+dayOffset+' \u00b7 '+step.phase;
+  document.getElementById('ci-title').textContent=step.title;
+  document.getElementById('ci-sub').textContent=ciDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const statusEl=document.getElementById('ci-status');
+  if(isDone){statusEl.className='modal-status done';statusEl.textContent='\u2713 Completed';}
+  else if(diff<0){statusEl.className='modal-status due';statusEl.textContent='\u25cf Overdue '+Math.abs(diff)+'d';}
+  else if(diff===0){statusEl.className='modal-status due';statusEl.textContent='\u25cf Due Today';}
+  else{statusEl.className='modal-status upcoming';statusEl.textContent='\u25cf In '+diff+' days';}
+  document.getElementById('ci-desc').textContent=step.detail;
+  const specialEl=document.getElementById('ci-special');
+  const sp=G.sp&&SPECIAL_PROMPTS[G.sp];
+  if(sp&&dayOffset>=sp.day&&!isDone){specialEl.style.display='';specialEl.textContent=sp.msg;}
+  else specialEl.style.display='none';
+  document.getElementById('ci-tags').innerHTML=(step.tags||[]).map(t=>'<div class="ci-tag">'+t+'</div>').join('');
+  const btn=document.getElementById('ci-btn');
+  if(isDone){btn.style.background='var(--green)';btn.style.color='#000';btn.textContent='\u2713 Check-In Completed';btn.disabled=true;}
+  else{btn.style.background='';btn.style.color='';btn.disabled=false;btn.textContent='Mark Complete \u2713';}
+  document.querySelectorAll('#modal-checkin .checkin-option').forEach(o=>o.classList.remove('selected'));
+  showModal('modal-checkin');
+}
+
+function saveCI(){
+  if(G.activeCI!==null&&!G.done.includes(G.activeCI))G.done.push(G.activeCI);
+  closeModal('modal-checkin');initHome();showToast('toast-home');
+}
+
+function selectOpt(el){el.closest('.checkin-options').querySelectorAll('.checkin-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
+
+function showModal(id){
+  if(id==='modal-notif'){
+    const n=getNextCI();
+    if(n!==null){
+      const ciDate=addDays(G.inocDate,n);
+      const diff=Math.floor((ciDate-TODAY)/86400000);
+      document.getElementById('notif-next-title').textContent='Day '+n+' Check-In';
+      document.getElementById('notif-next-sub').textContent=diff<0?'Overdue — '+Math.abs(diff)+'d ago':diff===0?'Due today!':'In '+diff+' day'+(diff!==1?'s':'');
+    } else {
+      document.getElementById('notif-next-title').textContent='All Check-Ins Complete!';
+      document.getElementById('notif-next-sub').textContent='Great grow — all done! 🍄';
+    }
+  }
+  document.getElementById(id).classList.add('visible');
+}
+function closeModal(id){document.getElementById(id).classList.remove('visible');}
+function closeModalBg(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+
+function showToast(id){const t=document.getElementById(id);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function updateHistoryActive(){
+  const el=document.getElementById('history-active');
+  const d=Math.max(0,Math.floor((TODAY-G.inocDate)/86400000));
+  el.innerHTML='<div class="history-item" style="border-color:rgba(233,30,140,0.3)"><div class="history-icon">🍄</div><div class="history-content"><div class="history-strain">'+G.strainName+'</div><div class="history-dates">Started '+G.inocDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' \u00b7 Day '+d+'</div></div><div class="history-result"><div class="stage-badge colonizing" style="font-size:10px"><span class="stage-dot"></span>Live</div><div style="font-size:11px;color:var(--gray);margin-top:4px">'+G.done.length+' check-ins</div></div></div>';
+}
+
+function updateSettings(){
+  document.getElementById('settings-strain').textContent=G.strainName;
+  document.getElementById('settings-profile').textContent=PROFILES[G.profile].label;
+  document.getElementById('settings-inocdate').textContent=G.inocDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('reset-grow-label').textContent='🍄 '+G.strainName;
+  document.getElementById('reset-grow-sub').textContent=G.done.length+' check-ins completed';
+}
+
+function confirmReset(){updateSettings();showModal('modal-reset');}
+
+function doReset(){
+  G.strainName='Golden Teacher';G.profile='standard';G.sp=null;
+  G.inocDate=new Date(TODAY);G.done=[];G.activeCI=null;selectedStrain=null;
+  closeModal('modal-reset');navTo('welcome');
+}
+
+async function triggerAI(){
+  const box=document.getElementById('ai-response-box');
+  const text=document.getElementById('ai-response-text');
+  box.classList.add('visible');
+  text.innerHTML='<span class="ai-typing">Analyzing your grow</span>';
+  const d=Math.max(0,Math.floor((TODAY-G.inocDate)/86400000));
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:'You are an expert mycologist inside the Nublume mushroom grow kit app. The user is growing '+G.strainName+' ('+PROFILES[G.profile].label+' profile), Day '+d+'. Give a concise, warm analysis. Include: 1) A positive observation about what should look good at this stage, 2) One key actionable tip, 3) What to watch for next. Under 80 words. Start with "Your mycelium is..."'}]})});
+    const data=await resp.json();
+    const msg=data.content?.[0]?.text||'Analysis complete. Your kit looks healthy!';
+    text.innerHTML='';let i=0;const t=setInterval(()=>{text.textContent+=msg[i++];if(i>=msg.length)clearInterval(t);},18);
+  }catch(e){
+    text.textContent='Your mycelium is showing solid growth for Day '+d+' of '+G.strainName+'! Keep temps stable at 75-80F and resist opening the bag. Watch for 70%+ coverage before initiating fruiting. Looking great! 🍄';
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  G.inocDate=new Date(TODAY);G.inocDate.setDate(G.inocDate.getDate()-12);G.inocDate.setHours(0,0,0,0);
+  calY=TODAY.getFullYear();calM=TODAY.getMonth();
+  buildDropdown('');
+  updateSettings();
+  initHome();
+});
+</script>
+</body>
+</html>
